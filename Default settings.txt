@@ -1,0 +1,4 @@
+minInd = 0
+maxInd = 70
+symbAmt = 1
+currDict = hiragana

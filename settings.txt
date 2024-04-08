@@ -1,0 +1,4 @@
+minInd = 0
+maxInd = 70
+symbAmt = 50
+currDict = katakana
