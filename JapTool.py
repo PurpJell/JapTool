@@ -25,25 +25,27 @@ class Settings(object):
     symbAmt = 1 # amt of symbols to translate in a prompt
     currDict = 'hiragana'
 
+    mode = "prod" # prod or test
+
     # methods
 
     def startUp(self): # imports settings from "settings.txt"
 
-         lines = []
+        lines = []
 
-         with open('settings.txt', "r") as settingsFile:
-                for line in settingsFile:
-                    
-                    words = line.split() # splits lines into words
-                    lines.append(words) #adds each line to a set (basically stores the file as lines of strings)
-  
-                    # !! lots of type errors?
-                self.minInd = int(lines[0][2]) # [line No][word No]
-                self.maxInd = int(lines[1][2])
-                self.symbAmt = int(lines[2][2])
-                self.currDict = lines[3][2]
+        with open('settings.txt', "r") as settingsFile:
+            for line in settingsFile:
+                
+                words = line.split() # splits lines into words
+                lines.append(words) #adds each line to a set (basically stores the file as lines of strings)
 
+                # !! lots of type errors?
+            self.minInd = int(lines[0][2]) # [line No][word No]
+            self.maxInd = int(lines[1][2])
+            self.symbAmt = int(lines[2][2])
+            self.currDict = lines[3][2]
 
+        return "Settings imported!"
 
     def changeSettings(self, setting): #change some settings, based on command (str setting)
 
@@ -55,49 +57,46 @@ class Settings(object):
             self.changeSettings(temp)
             temp = 'dict'
             self.changeSettings(temp)
-
-            #temp = 'read' # reads file
-            #self.changeSettings(temp)
-
    
         elif setting == 'ind':                                                                                      #ind bounds
             self.minInd = int(input("minInd, maxInd " + str(self.minInd) + " " + str(self.maxInd) + "\n"))
+            self.maxInd = int(input())
+
+            if (self.minInd < 0 or self.minInd > 123 or self.maxInd < 0 or self.maxInd > 123 or self.minInd > self.maxInd):
+                if (self.mode == "prod"):
+                    print("Invalid input!")
+                self.changeSettings('ind')
+                return "Invalid input!"
 
             keyword = 'minInd' #filework
             change = 'minInd = ' + str(self.minInd)
             self.OWFile(keyword, change)
 
-            self.maxInd = int(input())
-
             keyword = 'maxInd' #filework
             change = 'maxInd = ' + str(self.maxInd)
             self.OWFile(keyword, change)
-
-            #temp = 'read' # reads file
-            #self.changeSettings(temp)
          
         elif setting == 'amt':                                                                                      #symbAmt
             self.symbAmt = int(input("How many symbols do you want to translate?\n"))
 
+            if (self.symbAmt < 1):
+                if (self.mode == "prod"):
+                    print("Invalid input!")
+                self.changeSettings('amt')
+                return "Invalid input!"
+
             keyword = 'symbAmt' #filework
             change = 'symbAmt = ' + str(self.symbAmt)
             self.OWFile(keyword, change)
-
-            #temp = 'read' # reads file
-            #self.changeSettings(temp)
 
         elif setting == 'dict':                                                                                     #dict
             self.currDict = input("What dictionary do you want to use (H/K)?\n")
 
             if (self.currDict == 'H' or self.currDict == 'h'):
                 self.currDict = 'hiragana'
-                #print(currDict)
-                #print(self.currDict)
 
             elif (self.currDict == 'K' or self.currDict == 'k'):
                 self.currDict = 'katakana'
-                #print(currDict)
-                #print(self.currDict)
 
             else:
                 self.currDict = 'hiragana'
@@ -105,13 +104,11 @@ class Settings(object):
             keyword = 'currDict' #filework
             change = 'currDict = ' + str(self.currDict)
             self.OWFile(keyword, change)
-
-            #temp = 'read' # reads file
-            #self.changeSettings(temp)
  
         elif setting == 'read':
             
-            print("Reading settings file...\n")
+            if (self.mode == "prod"):
+                print("Reading settings file...\n")
 
             lines = []
 
@@ -119,10 +116,12 @@ class Settings(object):
                 for line in settingsFile:
                     lines.append(line) #adds each line to a set
                     line = line.split() # splits lines into words
-                    #print((str(line[2])).strip())
 
+            if (self.mode == "prod"):
                 for line in lines: # prints each line
                     print(str(line).strip())
+
+            return "Settings read!"
 
         elif setting == 'default':
             # DEFAULT SETTINGS
@@ -132,8 +131,10 @@ class Settings(object):
                 self.maxInd = 70
                 self.symbAmt = 10
                 self.currDict = 'hiragana'
-            print("settings returned to default")
-            # remember to change both, settingsFile.write() and self.property!
+
+        else:
+
+            return "Invalid command!"
 
     def OWFile(self, keyword, change):
 
@@ -146,92 +147,12 @@ class Settings(object):
 
                     if words[0] == keyword: # if this is the line that was changed
                         line = change # changes the line
-                        #print(str(words[0]) + ' == ' + keyword + ', ' + change)
-                        #print("!" + line)
 
                     lines.append(line) #adds each line to a set (basically stores the file as lines of strings)
 
         with open('settings.txt', "w") as settingsFile: # overwrites file
             for line in lines:
                 settingsFile.write((line).strip() + '\n')
-
-##################################################################################################################################################################################################################################    
-
-#class GUI(object):
-
-#    def __init__(self):
-
-#        window = tk.Tk()
-#        window.geometry('1650x135')
-#        window.resizable(width=0, height=0)
-#        window.title("JapTool")
-#        window.iconbitmap('/Users/kondr/OneDrive/Stalinis kompiuteris/Lukas/Python/JapTool/icon.ico')
-
-#        self.window = window
-
-
-#    frm_prompt = tk.Frame(bg="black")
-
-#    lbl_prompt = tk.Label(master = frm_prompt, bg = "black", fg = "white", height = 2, text="あかさたなはまやらわいきしちにひみりうくすつぬふむあかさたなはまやらわいきしちにひみりうくすつぬふむあかさたなはまやら", font=("Arial",20)) #max 59 chars
-
-
-#    def OnEnterPress(key):
-
-#        print("Enter pressed") # check answer, ...
-
-#    def OnEscPress(key, self):
-
-#        self.window.destroy()
-
-#    def QuitProgram(key, self):
-    
-#        self.window.destroy()
-
-#    def OpenSettings(key):
-
-#        wndw_stgs = tk.Tk()     # settings window
-
-#        text = tk.Text(font=("Arial",15), master = wndw_stgs)
-
-#        wndw_stgs.title("Settings")
-#        text.pack()
-#        text.insert("1.0","TEXT")
-
-#    window.bind("<Return>", self.OnEnterPress)
-#    window.bind("<Escape>", OnEscPress)
-
-#    #!! include correct answer, mistake highlights, timer, records
-
-#    frm_2 = tk.Frame(bg="#4E4E4E")
-
-#    ent = tk.Entry(master = frm_2, bg="#4E4E4E", fg="white", width=150, font=("Arial",20))
-
-
-#    frm_buttons = tk.Frame(bg="grey", width = 1611, height = 50)
-
-#    btn_quit = tk.Button(master = frm_buttons, bg="white", fg="black", borderwidth=3, relief=tk.RAISED, text="Quit")
-
-#    btn_settings = tk.Button(master = frm_buttons, bg="white", fg="black", borderwidth=3, relief=tk.RAISED, text="Settings")
-
-
-#    btn_quit.bind("<Button-1>", QuitProgram)
-#    btn_settings.bind("<Button-1>", OpenSettings)
-
-#    frm_prompt.pack(fill=tk.X)
-#    frm_2.pack(fill=tk.X)
-#    frm_buttons.pack(fill=tk.X)
-
-#    lbl_prompt.pack(side=tk.LEFT)
-#    ent.pack()
-#    btn_quit.pack(side=tk.RIGHT, padx = 3, pady = 2)
-#    btn_settings.pack(side=tk.RIGHT, pady = 2)
-
-#    window.mainloop()
-
-
-
-
-        
 
 
 class Game(object):
@@ -252,7 +173,6 @@ class Game(object):
         self.settings.startUp()
         self.readFile() # reads and splits all dictionaries, adds them to respective sets (hana[], roma[]...)
         
-
     def readFile(self):
 
         with open('hiragana.txt', "r", encoding="utf-16-le") as hanaFile:
@@ -289,19 +209,21 @@ class Game(object):
         for i in range(settings.symbAmt): # fetches symbAmt of symbols 
             symbInd = random.randrange(settings.minInd, settings.maxInd) # generates rng
             self.prompt = self.prompt + str(self.getSymb(symbInd, settings)) # gets symbol and adds it to the prompt
-            self.romaji = self.romaji + str(self.getRomanji(symbInd)) + " " # gets romaji counterpart
+            self.romaji = self.romaji + str(self.getRomaji(symbInd)) + " " # gets romaji counterpart
                
         self.prompt = self.prompt.strip()
         #self.romaji = self.romaji.strip()
     
-        print("_"*21+"\n" + self.prompt)
-        #print(self.romaji)
+        if (self.settings.mode == "prod"):
+
+            print("_"*21+"\n" + self.prompt)
+            print(self.romaji)
 
         self.promptTime = time.now()
 
-    def getSymb(self, symbInd, settings):
+        return self.prompt
 
-        #print("Ind = " + str(symbInd + 1) + "/" + str(len(self.dictionary) - 1 + 1))
+    def getSymb(self, symbInd, settings):
 
         symb = '!'
 
@@ -313,10 +235,9 @@ class Game(object):
 
             symb = self.kata[symbInd]
 
-        #print("symb = " + str(symb))
         return symb
 
-    def getRomanji(self, symbInd):
+    def getRomaji(self, symbInd):
         symb = self.roma[symbInd]
         return symb
 
@@ -346,13 +267,18 @@ class Game(object):
         else:
             st = "Answered in " + str(Time % 60) + " seconds, "
 
+        if (self.settings.mode == "prod"):
+
+            print(st)
+
         if answer == temp:
-            print("                                         prompt: "+self.prompt)
-            print("                                    your answer: "+answer)
+            if (self.settings.mode == "prod"):
+                print("                                         prompt: "+self.prompt)
+                print("                                    your answer: "+answer)
             self.inARow += 1
             
-
-            return st, True
+            return True
+        
         else:
 
             if len(answer) < len(temp):
@@ -366,12 +292,44 @@ class Game(object):
                 else:
                     correct = correct + temp[i].capitalize()
 
-            print(" "*41 + "prompt: "+self.prompt)
-            print(" "*33 + "correct answer: "+correct)
-            print(" "*36 + "your answer: "+answer)
-            
+            if (self.settings.mode == "prod"):
 
-            return st, False
+                print(" "*41 + "prompt: "+self.prompt)
+                print(" "*33 + "correct answer: "+correct)
+                print(" "*36 + "your answer: "+answer)
+                
+            return False
+        
+    def start(self):
+
+        while (True):
+
+            if self.romaji == 'x' and self.settings.mode == "prod": # first cycle?
+                print("\n\n\n\nAwaiting input\n\n(x) - exit, (s) - settings, (ent) - next\n")
+            if self.romaji != 'x': # not first cycle?
+                command = self.getCommand() #gets command
+                if command == 'x':
+                    break
+                elif command == 's':
+                    setting = str(input("\nWhat do you want to change?\n ind | amt | dict | all | read | default\n"))
+                    self.settings.changeSettings(setting)
+                    if (self.settings.mode == "prod"):
+                        print("Settings changed!\n") #!! if no TypeError
+                    self.givePrompt(self.settings)
+                    continue
+
+                answer = self.checkAnswer(command) #checks answer
+                if answer == True: # correct
+                    if (self.settings.mode == "prod"):
+                        print(" "*49 + "CORRECT.\n" + str(self.inARow) + " correct in a row!")
+                else: # incorrect
+                    if (self.settings.mode == "prod"):                                    
+                        print(" "*49 + "INCORRECT!\n" + " "*49 + "Lost streak of " + str(self.inARow) +"\n" + self.romaji)
+                    self.inARow = 0
+
+            self.givePrompt(self.settings)
+
+        return "Game over!"
             
 ################################################################################################################################################################################################################### 
 
@@ -379,30 +337,7 @@ game = Game()
 
 timePassed = ""
 
-while (True):
-
-    if game.romaji == 'x': # first cycle?
-        print("\n\n\n\nAwaiting input\n\n(x) - exit, (s) - settings, (ent) - next\n")
-    if game.romaji != 'x': # not first cycle?
-        command = game.getCommand() #gets command
-        if command == 'x':
-            break
-        elif command == 's':
-            setting = str(input("\nWhat do you want to change?\n ind | amt | dict | all | read | default\n"))
-            game.settings.changeSettings(setting)
-            print("Settings changed!\n") #!! if no TypeError
-            game.givePrompt(game.settings)
-            continue
-
-        timePassed, answer = game.checkAnswer(command) #checks answer
-        if answer == True:                                      # correct
-            print(" "*49 + "CORRECT.\n" + timePassed + str(game.inARow) + " correct in a row!")
-        else:                                                   # incorrect
-            print(" "*49 + "INCORRECT!\n" + " "*49 + "Lost streak of " + str(game.inARow) +"\n" + game.romaji)
-            game.inARow = 0
-
-    game.givePrompt(game.settings)
-
+# game.start()
 
     # incorporate romaji +
     # add timer + 

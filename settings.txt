@@ -1,4 +1,4 @@
 minInd = 0
 maxInd = 70
-symbAmt = 50
-currDict = katakana
+symbAmt = 10
+currDict = hiragana
